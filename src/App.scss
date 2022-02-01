@@ -1,0 +1,156 @@
+$primary-color: #17a2b8;
+$light-color: #f4f4f4;
+$dark-color: #343a40;
+$red-color: #e63946;
+$green-color: #99d98c;
+
+body {
+  display: block;
+  margin-top: 100px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+.header {
+  transform: translate(-20%, -100%);
+  grid-area: header;
+  background-color: $dark-color;
+  height: 15px;
+  width: 60px;
+  border: 2px solid black;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.header:active {
+  height: 10px;
+}
+.projector {
+  width: 100px;
+  color: $dark-color;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  transform: translate(6%, -130%);
+  &__wrapper {
+    position: relative;
+    margin: 10px 20px;
+    font-size: 1em;
+    line-height: 1em;
+    padding: 0.2em 0;
+    height: 50px;
+    margin: 0 auto;
+  }
+  &__wrapper:before {
+    content: '';
+    height: 50px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: -20px; /* stick out into margined area */
+    z-index: -1; /* make it the background */
+    border: 20px solid transparent; /* left/right diagonals */
+    border-top: 3.4em solid $green-color;
+    border-bottom: 0px solid transparent;
+  }
+  p {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(50%, -150%);
+    font-size: 20px;
+    color: $dark-color;
+    font-weight: bold;
+  }
+}
+.hour {
+  font-size: 80px;
+  grid-area: hh;
+}
+.minute {
+  font-size: 80px;
+  grid-area: mm;
+}
+.colon {
+  font-size: 80px;
+  grid-area: colon;
+}
+.mem,
+.alarm-1,
+.alarm-2,
+.sl {
+  font-size: 15px;
+  text-align: center;
+  border: 1px solid white;
+}
+.mem {
+  grid-area: mem;
+}
+.alarm-1 {
+  grid-area: al1;
+}
+.alarm-2 {
+  grid-area: al2;
+}
+.sl {
+  grid-area: sl;
+}
+
+.container {
+  display: block;
+  position: relative;
+  flex-direction: column;
+  justify-content: space-around;
+  justify-items: end;
+  border: 1px solid $light-color;
+  &__mainscreen {
+    border-bottom: 1px solid $dark-color;
+    margin: 0 auto;
+    margin-top: 100px;
+    padding: 20px;
+    text-align: center;
+    align-items: center;
+    .gridbox {
+      position: relative;
+      border-radius: 1rem;
+      margin: 0 auto;
+      display: grid;
+      width: fit-content;
+      grid-gap: 20px;
+      color: $light-color;
+      background-color: $dark-color;
+      padding: 20px;
+      grid-template-areas:
+        '.    .     .    .    .   .'
+        'hh   hh colon  mm   mm   . '
+        'mem al1    .   al2  sl   .';
+      grid-template-columns: 40px 40px 30px 40px 40px 30px;
+    }
+  }
+  &__buttons {
+    display: flex;
+    justify-content: center;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100vh;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 300px;
+    button {
+      width: fit-content;
+      height: fit-content;
+      height: 50px;
+      width: 100px;
+      cursor: pointer;
+    }
+    button:active {
+      transform: translate(0, 10px);
+    }
+  }
+}
+
+.off {
+  display: none;
+}
