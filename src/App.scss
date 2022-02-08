@@ -97,6 +97,9 @@ body {
 .sl {
   grid-area: sl;
 }
+.ampm {
+  grid-area: ampm;
+}
 
 .container {
   display: block;
@@ -123,7 +126,7 @@ body {
       background-color: $dark-color;
       padding: 20px;
       grid-template-areas:
-        '.    .     .    .    .   .'
+        '.    .     .    .    .   ampm'
         'hh   hh colon  mm   mm   . '
         'mem al1    .   al2  sl   .';
       grid-template-columns: 40px 40px 30px 40px 40px 30px;
@@ -146,11 +149,20 @@ body {
       cursor: pointer;
     }
     button:active {
-      transform: translate(0, 10px);
+      transform: scale(80%, 80%);
     }
   }
 }
 
 .off {
   display: none;
+}
+.blackout {
+  color: $dark-color;
+}
+.btn-primary {
+  background-color: $light-color;
+  border: 5px solid $primary-color;
+  border-radius: 2em;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
