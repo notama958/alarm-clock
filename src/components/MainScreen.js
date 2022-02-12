@@ -46,7 +46,6 @@ const MainScreen = ({
   const [hh, setHH] = useState(time_hh);
   const [mm, setMM] = useState(time_mm);
   const [currentThread, setCurrentThread] = useState(0);
-  const [snoozePID, setSnoozePID] = useState(null);
   const [showAlarm, setShowAlarm] = useState(null);
 
   const snoozeClock = () => {
@@ -55,7 +54,7 @@ const MainScreen = ({
       alarmOff(true);
     }
     if (time_hh === al2_hh && time_mm === al2_mm && al2) {
-      setShowAlarm(1);
+      setShowAlarm(2);
       alarmOff(true);
     }
   };
@@ -116,14 +115,13 @@ const MainScreen = ({
         className={`message-box  ${showAlarm === 1 && alarmOnOff ? '' : 'off'}`}
       >
         <h4>title: Alarm 1</h4>
-        <p>body: Reng Reng ! stop me by pressing RADIO/SLEEP</p>
+        <p>body: Reng Reng ! stop me by pressing RADIO/SLEEP or AL</p>
       </div>
       <div
         className={`message-box  ${showAlarm === 2 && alarmOnOff ? '' : 'off'}`}
       >
-        {' '}
         <h4>title: Alarm 2</h4>
-        <p>body: Reng Reng ! stop me by pressing RADIO/SLEEP</p>
+        <p>body: Reng Reng ! stop me by pressing RADIO/SLEEP or AL</p>
       </div>
       <div className="gridbox">
         <div

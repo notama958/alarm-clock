@@ -38,8 +38,6 @@ const AlarmController = ({
   const [fastInc, setFasInc] = useState(false);
   const [fastDec, setFasDec] = useState(false);
 
-  useEffect(() => {}, []);
-
   const fastInterval = setInterval(() => {
     if (fastInc) {
     }
@@ -84,13 +82,13 @@ const AlarmController = ({
       if (onAlarmMode.includes('al1')) {
         setAlarm1Hour(convertInc(al1_hour, 23, acc));
       } else if (onAlarmMode.includes('al2')) {
-        setAlarm2Hour(convertInc(al2_hour, 24, acc));
+        setAlarm2Hour(convertInc(al2_hour, 23, acc));
       }
     } else if (onAlarmMode.includes('mm')) {
       if (onAlarmMode.includes('al1')) {
-        setAlarm1Minute(convertInc(al1_minute, 60, 0, acc));
+        setAlarm1Minute(convertInc(al1_minute, 59, 0, acc));
       } else if (onAlarmMode.includes('al2')) {
-        setAlarm2Minute(convertInc(al2_minute, 60, 0, acc));
+        setAlarm2Minute(convertInc(al2_minute, 59, 0, acc));
       }
     } else {
       if (onAlarmMode.includes('al1')) {

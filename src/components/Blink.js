@@ -40,7 +40,7 @@ const Blink = ({
     let i = setTimeout(() => {
       resetTimeOrder();
       clearInterval(period);
-    }, 20 * 1000);
+    }, 50 * 1000);
     return () => {
       clearTimeout(i);
     };

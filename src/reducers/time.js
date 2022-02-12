@@ -9,14 +9,27 @@ import {
   SET_SNOOZE_TIME,
   CLOCK_ON,
 } from '../actions/types';
+const today = () => {
+  let today = new Date();
+  let h = today.getHours();
+  let m = today.getMinutes();
+  if (h < 10) {
+    h = '0' + h;
+  } else h = h.toString();
+
+  if (m < 10) {
+    m = '0' + m;
+  } else m = m.toString();
+  return { hh: h, mm: m };
+};
 const initState = {
   delay: 20000,
   onSystemSetting: false,
   AMPM: '',
   // system time
-  hour: '00',
+  hour: today().hh,
   hourTimer: null,
-  minute: '00',
+  minute: today().mm,
   minuteTimer: null,
   time_format: '24h',
   onTimeSetting: 'hh',

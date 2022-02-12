@@ -18,7 +18,7 @@ const BlinkIcon = ({
     let i = setTimeout(() => {
       resetAlarmAction();
       clearInterval(period);
-    }, 20 * 1000);
+    }, 50 * 1000);
     return () => {
       clearTimeout(i);
     };
