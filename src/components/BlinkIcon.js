@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import { resetAlarmAction } from '../actions/alarm';
 const BlinkIcon = ({
   type,
   msg,
@@ -9,9 +9,20 @@ const BlinkIcon = ({
   onAlarmSetting,
   alarm1,
   alarm2,
+  resetAlarmAction,
 }) => {
   const [visible, setVisible] = useState(true);
   const [period, setPeriod] = useState(null);
+  useEffect(() => {
+    // console.log(period);
+    let i = setTimeout(() => {
+      resetAlarmAction();
+      clearInterval(period);
+    }, 20 * 1000);
+    return () => {
+      clearTimeout(i);
+    };
+  }, [period, setPeriod]);
   useEffect(() => {
     if (onAlarmMode.includes(type) && onAlarmSetting) {
       setPeriod((period) =>
@@ -79,4 +90,4 @@ const mapStateToProps = ({ alarm, time }) => ({
   alarm1: alarm.alarm1,
   alarm2: alarm.alarm2,
 });
-export default connect(mapStateToProps, {})(BlinkIcon);
+export default connect(mapStateToProps, { resetAlarmAction })(BlinkIcon);
