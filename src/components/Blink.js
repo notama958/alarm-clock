@@ -2,7 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import {} from '../actions/alarm';
 import { connect } from 'react-redux';
-import {} from '../actions/time';
+import { resetTimeOrder } from '../actions/time';
 const Blink = ({
   AMPM,
   msg,
@@ -14,6 +14,7 @@ const Blink = ({
   // alarm
   onAlarmMode,
   onAlarmSetting,
+  resetTimeOrder,
 }) => {
   const [visible, setVisible] = useState(true);
   const [period, setPeriod] = useState(null);
@@ -36,7 +37,13 @@ const Blink = ({
     };
   }, [onTimeSetting, onSystemSetting]);
   useEffect(() => {
-    // console.log(period);
+    let i = setTimeout(() => {
+      resetTimeOrder();
+      clearInterval(period);
+    }, 20 * 1000);
+    return () => {
+      clearTimeout(i);
+    };
   }, [period, setPeriod]);
   useEffect(() => {
     if (type !== onTimeSetting) {
@@ -50,10 +57,7 @@ const Blink = ({
       }
       clearInterval(period);
     }
-    if (!onAlarmMode.includes(type) && onAlarmSetting) {
-      clearInterval(period);
-    }
-  }, [onTimeSetting, onAlarmSetting, onAlarmMode]);
+  }, [onTimeSetting]);
   useEffect(() => {
     if (onAlarmSetting && onAlarmMode.includes(type)) {
       setPeriod((period) =>
@@ -76,4 +80,4 @@ const mapStateToProps = ({ alarm, time }) => ({
   onAlarmMode: alarm.onAlarmMode,
   onAlarmSetting: alarm.onAlarmSetting,
 });
-export default connect(mapStateToProps, {})(Blink);
+export default connect(mapStateToProps, { resetTimeOrder })(Blink);

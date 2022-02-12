@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
+import { alarmOff } from '../actions/alarm';
 import {
   setProjector,
   ConvertTime,
@@ -10,6 +11,7 @@ import {
 } from '../actions/time';
 import Blink from './Blink';
 import BlinkIcon from './BlinkIcon';
+
 const MainScreen = ({
   AMPM,
   time_hh,
@@ -37,11 +39,27 @@ const MainScreen = ({
   al2_mode,
   onAlarmSetting,
   onAlarmMode,
+  alarmOnOff,
+  alarmOff,
 }) => {
   const [adjHour, setAdjHour] = useState(time_hh);
   const [hh, setHH] = useState(time_hh);
   const [mm, setMM] = useState(time_mm);
-  const [currentThread, setCurrentThread] = useState(null);
+  const [currentThread, setCurrentThread] = useState(0);
+  const [snoozePID, setSnoozePID] = useState(null);
+  const [showAlarm, setShowAlarm] = useState(null);
+
+  const snoozeClock = () => {
+    if (time_hh === al1_hh && time_mm === al1_mm && al1) {
+      setShowAlarm(1);
+      alarmOff(true);
+    }
+    if (time_hh === al2_hh && time_mm === al2_mm && al2) {
+      setShowAlarm(1);
+      alarmOff(true);
+    }
+  };
+
   useEffect(() => {
     let today = new Date();
     let h = today.getHours();
@@ -61,27 +79,18 @@ const MainScreen = ({
   }, []);
 
   useEffect(() => {
-    if (start) {
-      setCurrentThread(
-        setInterval(() => {
-          // pause while set clock
-          if (!onSystemSetting || !onAlarmSetting) {
-            console.log('change time ', time_mm);
-            countUp(time_hh, time_mm);
-          }
-        }, 2500)
-      );
-    } else {
-      console.log('Remove time');
-      clearInterval(currentThread);
-      setCurrentThread(null);
-    }
+    const id = setTimeout(() => {
+      if (!onSystemSetting && !onAlarmSetting) {
+        snoozeClock();
+        countUp(time_hh, time_mm);
+        setCurrentThread(currentThread + 1);
+      }
+    }, 5000);
     return () => {
-      // clockOn(false);
-      clearInterval(currentThread);
-      setCurrentThread(null);
+      clearTimeout(id);
     };
-  }, [start]);
+  }, [currentThread, onSystemSetting, onAlarmSetting]);
+
   useEffect(() => {
     console.log('=====>', time_mm);
   }, [time_mm]);
@@ -103,6 +112,19 @@ const MainScreen = ({
 
   return (
     <div className="container__mainscreen">
+      <div
+        className={`message-box  ${showAlarm === 1 && alarmOnOff ? '' : 'off'}`}
+      >
+        <h4>title: Alarm 1</h4>
+        <p>body: Reng Reng ! stop me by pressing RADIO/SLEEP</p>
+      </div>
+      <div
+        className={`message-box  ${showAlarm === 2 && alarmOnOff ? '' : 'off'}`}
+      >
+        {' '}
+        <h4>title: Alarm 2</h4>
+        <p>body: Reng Reng ! stop me by pressing RADIO/SLEEP</p>
+      </div>
       <div className="gridbox">
         <div
           className="grid-box__child header"
@@ -209,6 +231,7 @@ const mapStateToProps = ({ alarm, time }) => ({
   onSystemSetting: time.onSystemSetting,
   onAlarmSetting: alarm.onAlarmSetting,
   onAlarmMode: alarm.onAlarmMode,
+  alarmOnOff: alarm.alarmOnOff,
 });
 export default connect(mapStateToProps, {
   setProjector,
@@ -217,4 +240,5 @@ export default connect(mapStateToProps, {
   setTimeMinute,
   setTimeHour,
   countUp,
+  alarmOff,
 })(MainScreen);

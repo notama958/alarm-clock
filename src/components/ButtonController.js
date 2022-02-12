@@ -12,6 +12,7 @@ import {
   setSnoozeTime,
 } from '../actions/time';
 import {
+  alarmOff,
   nextAlarmSetting,
   resetAlarmAction,
   setAlarm1Mode,
@@ -40,12 +41,16 @@ const ButtonController = ({
   onAlarmMode,
   nextAlarmSetting,
   resetAlarmAction,
+  alarmOff,
+  alarmOnOff,
 }) => {
   // enter long press
   const [enabled, setEnabled] = useState(true);
   const [enabled_up, setEnabled_up] = useState(true);
   const [enabled_down, setEnabled_down] = useState(true);
   const [mode, setMode] = useState(null);
+  const [snoozePID, setSnoozePID] = useState(0);
+  const [snoozeOnClick, setSnoozeOnClick] = useState(false);
   const [pid, setPid] = useState(
     setInterval(() => {
       // alert(mode);
@@ -60,6 +65,17 @@ const ButtonController = ({
   useEffect(() => {
     return () => clearInterval(pid.current);
   }, []);
+  useEffect(() => {
+    alarmOff(false);
+    let i = setTimeout(() => {
+      if (alarmOnOff) {
+        alarmOff(true);
+      }
+    }, parseInt(snoozeTime) * 1000);
+    return () => {
+      clearTimeout(i);
+    };
+  }, [snoozeOnClick]);
   const callback_up = useCallback((event) => {
     if (onSystemSetting) {
       setMode((mode) => 1);
@@ -77,40 +93,40 @@ const ButtonController = ({
     setTimeMode(!onSystemSetting);
   }, []);
   const timeFormats = ['24h', '12h'];
-  const convertInc = (num, max, acceleration = 0) => {
-    let temp = (parseInt(num) + 1 + acceleration) % max;
+  const convertInc = (num, max, min = 0, acceleration = 0) => {
+    let temp = (parseInt(num) + 1 + acceleration + min) % max;
     if (temp == 0) {
-      temp = max;
+      temp = max.toString();
     }
     if (Math.floor(temp / 10) === 0) {
       temp = '0' + temp;
     }
-    return temp;
+    return temp.toString();
   };
   const convertDec = (num, max, min = 0, acceleration = 0) => {
     let temp = parseInt(num) - 1 - acceleration;
     if (temp === min) {
       temp = '0' + min;
     } else if (temp < min) {
-      temp = max;
+      temp = max.toString();
     } else if (Math.floor(temp / 10) === 0) {
       temp = '0' + temp;
     }
-    return temp;
+    return temp.toString();
   };
 
   const increment = (e, acc = 0) => {
     if (onTimeSetting === 'hh') {
       if (time_format === '24h') setTimeHour(convertInc(thour, 23, acc));
-      else setTimeHour(convertInc(thour, 12, acc));
+      else setTimeHour(convertInc(thour, 12, 0, acc));
     } else if (onTimeSetting === 'mm') {
-      setTimeMinute(convertInc(tminute, 59, acc));
+      setTimeMinute(convertInc(tminute, 59, 0, acc));
     } else if (onTimeSetting === 'time_format') {
       setTimeFormat(
         timeFormats[(timeFormats.indexOf(time_format) + 1) % timeFormats.length]
       );
     } else if (onTimeSetting === 'snooze_time') {
-      setSnoozeTime(convertInc(snoozeTime, 59, acc));
+      setSnoozeTime(convertInc(snoozeTime, 59, 5, acc));
     }
   };
   const decrement = (e, acc = 0) => {
@@ -118,13 +134,13 @@ const ButtonController = ({
       if (time_format === '24h') setTimeHour(convertDec(thour, 23, acc));
       else setTimeHour(convertDec(thour, 12, acc));
     } else if (onTimeSetting === 'mm') {
-      setTimeMinute(convertDec(tminute, 60, 0, acc));
+      setTimeMinute(convertDec(tminute, 59, 0, acc));
     } else if (onTimeSetting === 'time_format') {
       setTimeFormat(
         timeFormats[(timeFormats.indexOf(time_format) + 1) % timeFormats.length]
       );
     } else if (onTimeSetting === 'snooze_time') {
-      setSnoozeTime(convertDec(snoozeTime, 60, 5, acc));
+      setSnoozeTime(convertDec(snoozeTime, 59, 5, acc));
     }
   };
   const bind_up = useLongPress(enabled_up ? callback_up : null, {
@@ -195,22 +211,26 @@ const ButtonController = ({
   /////////////////////////////////////// ALARM
 
   const alarmOnClick = () => {
-    setAlarmSetting(true);
-    if (onAlarmMode === '') {
-      nextAlarmSetting('al1_hh');
-    } else if (onAlarmMode === 'al1_hh') {
-      nextAlarmSetting('al1_mm');
-    } else if (onAlarmMode === 'al1_mm') {
-      nextAlarmSetting('al1_mode');
-    } else if (onAlarmMode === 'al1_mode') {
-      nextAlarmSetting('al2_hh');
-    } else if (onAlarmMode === 'al2_hh') {
-      nextAlarmSetting('al2_mm');
-    } else if (onAlarmMode === 'al2_mm') {
-      nextAlarmSetting('al2_mode');
-    } else if (onAlarmMode === 'al2_mode') {
+    if (alarmOnOff) {
+      alarmOff(false);
+    } else {
+      setAlarmSetting(true);
+      if (onAlarmMode === '') {
+        nextAlarmSetting('al1_hh');
+      } else if (onAlarmMode === 'al1_hh') {
+        nextAlarmSetting('al1_mm');
+      } else if (onAlarmMode === 'al1_mm') {
+        nextAlarmSetting('al1_mode');
+      } else if (onAlarmMode === 'al1_mode') {
+        nextAlarmSetting('al2_hh');
+      } else if (onAlarmMode === 'al2_hh') {
+        nextAlarmSetting('al2_mm');
+      } else if (onAlarmMode === 'al2_mm') {
+        nextAlarmSetting('al2_mode');
+      } else if (onAlarmMode === 'al2_mode') {
+        resetAlarmAction();
+      }
       // reset
-      resetAlarmAction();
     }
   };
   return (
@@ -223,8 +243,17 @@ const ButtonController = ({
         </button>
       )}
       <button className="btn btn-primary">VOL</button>
-      <button className="btn btn-primary">RADIO SLEEP</button>
-      <button className="btn btn-primary">SNOOZE DIMMER</button>
+      <button className="btn btn-primary" onClick={(e) => alarmOff(false)}>
+        RADIO SLEEP
+      </button>
+      <button
+        className="btn btn-primary"
+        onClick={(e) => {
+          setSnoozeOnClick(!snoozeOnClick);
+        }}
+      >
+        SNOOZE DIMMER
+      </button>
       <button className="btn btn-primary" {...bind_set}>
         SET
       </button>
@@ -252,6 +281,7 @@ const mapStateToProps = ({ alarm, time }) => ({
   snoozeTime: time.snoozeTime,
   onAlarmSetting: alarm.onAlarmSetting,
   onAlarmMode: alarm.onAlarmMode,
+  alarmOnOff: alarm.alarmOnOff,
 });
 export default connect(mapStateToProps, {
   setTimeMode,
@@ -265,4 +295,5 @@ export default connect(mapStateToProps, {
   setAlarmSetting,
   nextAlarmSetting,
   resetAlarmAction,
+  alarmOff,
 })(ButtonController);

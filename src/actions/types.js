@@ -25,3 +25,4 @@ export const SET_ALARM2_MINUTE = 'SET_ALARM2_MINUTE';
 
 export const SET_PROJECTOR = 'SET_PROJECTOR';
 export const CLOCK_ON = 'CLOCK_ON';
+export const ALARM_ON_OFF = 'ALARM_ON_OFF';

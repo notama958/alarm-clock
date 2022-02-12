@@ -11,14 +11,15 @@ import {
   NEXT_ALARM_SETTING,
   RESET_TIME_ORDER,
   RESET_ALARM_ORDER,
+  ALARM_ON_OFF,
 } from '../actions/types';
 const initState = {
   delay: 20000,
   onAlarmSetting: false,
   onAlarmMode: '',
   // system alarm
-  al1_hour: '00',
-  al2_hour: '00',
+  al1_hour: '05',
+  al2_hour: '05',
   al1_minute: '00',
   al2_minute: '00',
   // mode
@@ -27,6 +28,7 @@ const initState = {
   // alarm
   alarm1: false,
   alarm2: false,
+  alarmOnOff: false,
 };
 export default function (state = initState, action) {
   const { type, payload } = action;
@@ -89,6 +91,11 @@ export default function (state = initState, action) {
         ...state,
         onAlarmSetting: false,
         onAlarmMode: '',
+      };
+    case ALARM_ON_OFF:
+      return {
+        ...state,
+        alarmOnOff: payload,
       };
     default:
       return state;

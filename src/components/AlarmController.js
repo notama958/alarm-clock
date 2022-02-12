@@ -60,23 +60,23 @@ const AlarmController = ({
   const convertInc = (num, max, acceleration = 0) => {
     let temp = (parseInt(num) + 1 + acceleration) % max;
     if (temp == 0) {
-      temp = max;
+      temp = max.toString();
     }
     if (Math.floor(temp / 10) === 0) {
       temp = '0' + temp;
     }
-    return temp;
+    return temp.toString();
   };
   const convertDec = (num, max, min = 0, acceleration = 0) => {
     let temp = parseInt(num) - 1 - acceleration;
     if (temp === min) {
       temp = '0' + min;
     } else if (temp < min) {
-      temp = max;
+      temp = max.toString();
     } else if (Math.floor(temp / 10) === 0) {
       temp = '0' + temp;
     }
-    return temp;
+    return temp.toString();
   };
 
   const increment = (e, acc = 0) => {

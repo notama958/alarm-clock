@@ -131,6 +131,15 @@ body {
         'mem al1    .   al2  sl   .';
       grid-template-columns: 40px 40px 30px 40px 40px 30px;
     }
+    .message-box {
+      background-color: $primary-color;
+      height: fit-content;
+      margin-bottom: 20px;
+      color: $light-color;
+      text-align: left;
+      padding: 5px;
+      border-radius: 2rem;
+    }
   }
   &__buttons {
     display: flex;
