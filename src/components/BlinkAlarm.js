@@ -1,8 +1,6 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import {} from '../actions/alarm';
 import { connect } from 'react-redux';
-import {} from '../actions/time';
 const BlinkAlarm = ({
   AMPM,
   msg,
@@ -16,17 +14,6 @@ const BlinkAlarm = ({
   const [visible, setVisible] = useState(true);
   const [period, setPeriod] = useState(null);
   const [time, setTime] = useState(msg);
-  useEffect(() => {
-    if (AMPM === '12h') {
-      if (type === 'hh') {
-        setTime();
-      }
-    } else {
-      if (type === 'hh') {
-        setTime();
-      }
-    }
-  }, [AMPM, time, setTime]);
   useEffect(() => {
     if (onAlarmMode === type && onAlarmSetting) {
       setPeriod((period) =>

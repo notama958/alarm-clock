@@ -69,26 +69,21 @@ export const setProjector = (mode) => (dispatch) => {
 export const ConvertTime = (time, time_format, ampm = '') => {
   let hour = parseInt(time);
   let stringHour;
-  if (time_format === '12h') {
+
+  if (ampm !== '') {
     if (hour === 0) {
       return '12';
     } else if (hour > 12) {
       stringHour = hour - 12;
+      if (stringHour < 10) {
+        return '0' + stringHour;
+      }
       return stringHour.toString();
     }
-  } else {
-    if (ampm === 'AM') {
-      if (hour === 0) {
-        return '00';
-      }
-    } else if (ampm === 'PM') {
-      if (hour >= 1) {
-        stringHour = hour + 12;
-        return stringHour.toString();
-      }
-    }
   }
-
+  if (hour < 10) {
+    return '0' + hour;
+  }
   return time;
 };
 export const clockOn = (mode) => (dispatch) => {
@@ -98,30 +93,28 @@ export const clockOn = (mode) => (dispatch) => {
   });
 };
 
-export const countUp =
-  (hh, mm, ampm = '') =>
-  (dispatch) => {
-    console.log('RECEIVED: ', mm);
-    let minute = (parseInt(mm) + 1) % 60;
-    let hour = hh;
-    if (minute === 0) {
-      hour = (parseInt(hh) + 1) % 24;
-      if (hour > 0 && hour < 10) {
-        hour = '0' + hour;
-      }
+export const countUp = (hh, mm) => (dispatch) => {
+  // console.log('RECEIVED: ', mm);
+  let minute = (parseInt(mm) + 1) % 60;
+  let hour = hh;
+  if (minute === 0) {
+    hour = (parseInt(hh) + 1) % 24;
+    if (hour < 10) {
+      hour = '0' + hour;
     }
-    if (minute > 0 && minute < 10) {
-      minute = '0' + minute;
-    }
-    minute = minute.toString();
-    hour = hour.toString();
-    console.log('After calculation: ', hour, minute);
-    dispatch({
-      type: SET_TIME_HOUR,
-      payload: hour,
-    });
-    dispatch({
-      type: SET_TIME_MINUTE,
-      payload: minute,
-    });
-  };
+  }
+  if (minute < 10) {
+    minute = '0' + minute;
+  }
+  minute = minute.toString();
+  hour = hour.toString();
+  // console.log('After calculation: ', hour, minute);
+  dispatch({
+    type: SET_TIME_HOUR,
+    payload: hour,
+  });
+  dispatch({
+    type: SET_TIME_MINUTE,
+    payload: minute,
+  });
+};

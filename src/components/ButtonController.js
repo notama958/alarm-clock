@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useLongPress } from 'use-long-press';
 import { connect } from 'react-redux';
@@ -11,8 +11,14 @@ import {
   setTimeFormat,
   setSnoozeTime,
 } from '../actions/time';
-import { setAlarmSetting } from '../actions/alarm';
+import {
+  nextAlarmSetting,
+  resetAlarmAction,
+  setAlarm1Mode,
+  setAlarmSetting,
+} from '../actions/alarm';
 import AlarmController from './AlarmController';
+import time from '../reducers/time';
 
 const ButtonController = ({
   thour,
@@ -31,19 +37,41 @@ const ButtonController = ({
   // alarm
   onAlarmSetting,
   setAlarmSetting,
+  onAlarmMode,
+  nextAlarmSetting,
+  resetAlarmAction,
 }) => {
   // enter long press
   const [enabled, setEnabled] = useState(true);
   const [enabled_up, setEnabled_up] = useState(true);
   const [enabled_down, setEnabled_down] = useState(true);
+  const [mode, setMode] = useState(null);
+  const [pid, setPid] = useState(
+    setInterval(() => {
+      // alert(mode);
+      if (mode === 1) {
+        console.log(mode);
+        increment(null, 5);
+      } else if (mode === 2) {
+        decrement(null, 5);
+      }
+    }, 1000)
+  );
+  useEffect(() => {
+    return () => clearInterval(pid.current);
+  }, []);
   const callback_up = useCallback((event) => {
     if (onSystemSetting) {
-      increment(event, 5);
+      setMode((mode) => 1);
     }
   });
   const callback_down = useCallback((event) => {
-    if (onSystemSetting) decrement(event, 5);
+    if (onSystemSetting) {
+      console.log('Enter long press');
+      setMode((mode) => 2);
+    }
   });
+
   const callback = useCallback((event) => {
     alert('Enter Time Setting');
     setTimeMode(!onSystemSetting);
@@ -100,23 +128,45 @@ const ButtonController = ({
     }
   };
   const bind_up = useLongPress(enabled_up ? callback_up : null, {
-    onFinish: (event) => {},
-    onCancel: (event) => {},
+    onFinish: (event) => {
+      setMode((mode) => null);
+    },
+    onCancel: (event) => {
+      setMode((mode) => null);
+    },
     onMove: (event) => {
       if (onSystemSetting) increment();
     },
-    threshold: 1500,
+    threshold: 1000,
     captureEvent: true,
     cancelOnMovement: false,
     detect: 'both',
   });
+
+  useEffect(() => {
+    console.log(mode);
+  }, [mode, setMode]);
+
+  useEffect(() => {
+    console.log(pid, mode);
+    if (pid && mode === null) {
+      clearInterval(pid);
+    }
+  }, [pid, setPid]);
+
   const bind_down = useLongPress(enabled_down ? callback_down : null, {
-    onFinish: (event) => {},
-    onCancel: (event) => {},
+    onFinish: (event) => {
+      clearInterval(pid.current);
+      setMode((mode) => null);
+    },
+    onCancel: (event) => {
+      clearInterval(pid.current);
+      setMode((mode) => null);
+    },
     onMove: (event) => {
       if (onSystemSetting) decrement();
     },
-    threshold: 1500,
+    threshold: 1000,
     captureEvent: true,
     cancelOnMovement: false,
     detect: 'both',
@@ -146,6 +196,22 @@ const ButtonController = ({
 
   const alarmOnClick = () => {
     setAlarmSetting(true);
+    if (onAlarmMode === '') {
+      nextAlarmSetting('al1_hh');
+    } else if (onAlarmMode === 'al1_hh') {
+      nextAlarmSetting('al1_mm');
+    } else if (onAlarmMode === 'al1_mm') {
+      nextAlarmSetting('al1_mode');
+    } else if (onAlarmMode === 'al1_mode') {
+      nextAlarmSetting('al2_hh');
+    } else if (onAlarmMode === 'al2_hh') {
+      nextAlarmSetting('al2_mm');
+    } else if (onAlarmMode === 'al2_mm') {
+      nextAlarmSetting('al2_mode');
+    } else if (onAlarmMode === 'al2_mode') {
+      // reset
+      resetAlarmAction();
+    }
   };
   return (
     <div className="container__buttons">
@@ -185,6 +251,7 @@ const mapStateToProps = ({ alarm, time }) => ({
   time_format: time.time_format,
   snoozeTime: time.snoozeTime,
   onAlarmSetting: alarm.onAlarmSetting,
+  onAlarmMode: alarm.onAlarmMode,
 });
 export default connect(mapStateToProps, {
   setTimeMode,
@@ -196,4 +263,6 @@ export default connect(mapStateToProps, {
   setSnoozeTime,
   // alarm
   setAlarmSetting,
+  nextAlarmSetting,
+  resetAlarmAction,
 })(ButtonController);

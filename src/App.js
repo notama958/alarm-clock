@@ -6,15 +6,16 @@ import store from './store';
 import MainScreen from './components/MainScreen';
 import ButtonController from './components/ButtonController';
 
-function App() {
+const App = ({}) => {
   return (
     <Provider store={store}>
       <div className="container">
         <MainScreen />
+
         <ButtonController />
       </div>
     </Provider>
   );
-}
+};
 
 export default App;

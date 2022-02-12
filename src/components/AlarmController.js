@@ -1,12 +1,53 @@
-import React, { Fragment, useState, useCallback } from 'react';
+import React, { Fragment, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useLongPress } from 'use-long-press';
+import {
+  setAlarm1Hour,
+  setAlarm1Minute,
+  setAlarm1Mode,
+  setAlarm2Hour,
+  setAlarm2Minute,
+  setAlarm2Mode,
+} from '../actions/alarm';
 
-const AlarmController = ({ type, onAlarmSetting }) => {
+const AlarmController = ({
+  type,
+  al1_hour,
+  al1_minute,
+
+  al2_hour,
+  al2_minute,
+
+  al1_mode,
+  al2_mode,
+
+  alarm1,
+  alarm2,
+  onAlarmSetting,
+  onAlarmMode,
+  setAlarm1Hour,
+  setAlarm1Minute,
+  setAlarm2Hour,
+  setAlarm2Minute,
+  setAlarm1Mode,
+  setAlarm2Mode,
+}) => {
   const [enabled_up, setEnabled_up] = useState(true);
   const [enabled_down, setEnabled_down] = useState(true);
-  const timeFormats = ['24h', '12h'];
+  const [fastInc, setFasInc] = useState(false);
+  const [fastDec, setFasDec] = useState(false);
+
+  useEffect(() => {}, []);
+
+  const fastInterval = setInterval(() => {
+    if (fastInc) {
+    }
+    if (fastDec) {
+    }
+  }, 1500);
+  const Modes = ['rd', 'bu', 'off'];
+
   const callback_up = useCallback((event) => {
     if (onAlarmSetting) {
       increment(event, 5);
@@ -15,6 +56,7 @@ const AlarmController = ({ type, onAlarmSetting }) => {
   const callback_down = useCallback((event) => {
     if (onAlarmSetting) decrement(event, 5);
   });
+
   const convertInc = (num, max, acceleration = 0) => {
     let temp = (parseInt(num) + 1 + acceleration) % max;
     if (temp == 0) {
@@ -37,8 +79,57 @@ const AlarmController = ({ type, onAlarmSetting }) => {
     return temp;
   };
 
-  const increment = (e, acc = 0) => {};
-  const decrement = (e, acc = 0) => {};
+  const increment = (e, acc = 0) => {
+    if (onAlarmMode.includes('hh')) {
+      if (onAlarmMode.includes('al1')) {
+        setAlarm1Hour(convertInc(al1_hour, 23, acc));
+      } else if (onAlarmMode.includes('al2')) {
+        setAlarm2Hour(convertInc(al2_hour, 24, acc));
+      }
+    } else if (onAlarmMode.includes('mm')) {
+      if (onAlarmMode.includes('al1')) {
+        setAlarm1Minute(convertInc(al1_minute, 60, 0, acc));
+      } else if (onAlarmMode.includes('al2')) {
+        setAlarm2Minute(convertInc(al2_minute, 60, 0, acc));
+      }
+    } else {
+      if (onAlarmMode.includes('al1')) {
+        setAlarm1Mode(Modes[(Modes.indexOf(al1_mode) + 1) % Modes.length]);
+      } else if (onAlarmMode.includes('al2')) {
+        setAlarm2Mode(Modes[(Modes.indexOf(al2_mode) + 1) % Modes.length]);
+      }
+    }
+  };
+  const decrement = (e, acc = 0) => {
+    if (onAlarmMode.includes('hh')) {
+      if (onAlarmMode.includes('al1')) {
+        setAlarm1Hour(convertDec(al1_hour, 23));
+      } else if (onAlarmMode.includes('al2')) {
+        setAlarm2Hour(convertDec(al2_hour, 23));
+      }
+    } else if (onAlarmMode.includes('mm')) {
+      if (onAlarmMode.includes('al1')) {
+        setAlarm1Minute(convertDec(al1_minute, 59));
+      } else if (onAlarmMode.includes('al2')) {
+        setAlarm2Minute(convertDec(al2_minute, 59));
+      }
+    } else {
+      let temp;
+      if (onAlarmMode.includes('al1')) {
+        temp = Modes.indexOf(al1_mode) - 1;
+        if (temp < 0) {
+          temp = Modes.length - 1;
+        }
+        setAlarm1Mode(Modes[temp]);
+      } else if (onAlarmMode.includes('al2')) {
+        temp = Modes.indexOf(al2_mode) - 1;
+        if (temp < 0) {
+          temp = Modes.length - 1;
+        }
+        setAlarm2Mode(Modes[temp]);
+      }
+    }
+  };
   const bind_up = useLongPress(enabled_up ? callback_up : null, {
     onFinish: (event) => {},
     onCancel: (event) => {},
@@ -77,14 +168,27 @@ const AlarmController = ({ type, onAlarmSetting }) => {
 };
 
 const mapStateToProps = ({ alarm, time }) => ({
-  onTimeSetting: time.onTimeSetting,
-  time_hour: time.time_hour,
-  thour: time.hour,
-  tminute: time.minute,
+  alarm1: alarm.alarm1,
+  alarm2: alarm.alarm2,
+  al1_hour: alarm.al1_hour,
+  al1_minute: alarm.al1_minute,
+  al2_hour: alarm.al2_hour,
+  al2_minute: alarm.al2_minute,
+  al1_mode: alarm.al1_mode,
+  al2_mode: alarm.al2_mode,
   time_format: time.time_format,
   snoozeTime: time.snoozeTime,
+
   onAlarmSetting: alarm.onAlarmSetting,
+  onAlarmMode: alarm.onAlarmMode,
 });
 AlarmController.propTypes = {};
 
-export default connect(mapStateToProps, {})(AlarmController);
+export default connect(mapStateToProps, {
+  setAlarm1Hour,
+  setAlarm1Minute,
+  setAlarm2Hour,
+  setAlarm2Minute,
+  setAlarm1Mode,
+  setAlarm2Mode,
+})(AlarmController);

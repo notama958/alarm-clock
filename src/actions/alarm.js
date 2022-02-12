@@ -7,8 +7,8 @@ import {
   SET_ALARM2_MINUTE,
   SET_ALARM1_MODE,
   SET_ALARM2_MODE,
-  NEXT_TIME_SETTING,
   NEXT_ALARM_SETTING,
+  RESET_ALARM_ORDER,
 } from './types';
 
 export const setAlarmSetting = (stt) => (dispatch) => {
@@ -63,5 +63,11 @@ export const nextAlarmSetting = (mode) => (dispatch) => {
   dispatch({
     type: NEXT_ALARM_SETTING,
     payload: mode,
+  });
+};
+
+export const resetAlarmAction = () => (dispatch) => {
+  dispatch({
+    type: RESET_ALARM_ORDER,
   });
 };

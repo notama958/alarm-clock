@@ -11,21 +11,14 @@ const Blink = ({
   onTimeSetting,
   type,
   delay = 1000,
+  // alarm
+  onAlarmMode,
+  onAlarmSetting,
 }) => {
   const [visible, setVisible] = useState(true);
   const [period, setPeriod] = useState(null);
   const [time, setTime] = useState(msg);
-  useEffect(() => {
-    if (AMPM === '12h') {
-      if (type === 'hh') {
-        setTime();
-      }
-    } else {
-      if (type === 'hh') {
-        setTime();
-      }
-    }
-  }, [AMPM, time, setTime]);
+
   useEffect(() => {
     if (onTimeSetting === type && onSystemSetting) {
       setPeriod((period) =>
@@ -36,7 +29,6 @@ const Blink = ({
         }, 1000)
       );
     } else {
-      // console.log(type); // I expected you b!tch
       clearInterval(period);
     }
     return () => {
@@ -58,7 +50,21 @@ const Blink = ({
       }
       clearInterval(period);
     }
-  }, [onTimeSetting]);
+    if (!onAlarmMode.includes(type) && onAlarmSetting) {
+      clearInterval(period);
+    }
+  }, [onTimeSetting, onAlarmSetting, onAlarmMode]);
+  useEffect(() => {
+    if (onAlarmSetting && onAlarmMode.includes(type)) {
+      setPeriod((period) =>
+        setInterval(() => {
+          setVisible((visible) => !visible);
+        }, 1000)
+      );
+    } else {
+      clearInterval(period);
+    }
+  }, [onAlarmSetting, onAlarmMode]);
   return <Fragment>{visible ? msg : ''}</Fragment>;
 };
 
@@ -67,5 +73,7 @@ const mapStateToProps = ({ alarm, time }) => ({
   AMPM: time.AMPM,
   onTimeSetting: time.onTimeSetting,
   onSystemSetting: time.onSystemSetting,
+  onAlarmMode: alarm.onAlarmMode,
+  onAlarmSetting: alarm.onAlarmSetting,
 });
 export default connect(mapStateToProps, {})(Blink);

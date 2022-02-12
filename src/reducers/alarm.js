@@ -15,7 +15,7 @@ import {
 const initState = {
   delay: 20000,
   onAlarmSetting: false,
-  onAlarmMode: 'hh',
+  onAlarmMode: '',
   // system alarm
   al1_hour: '00',
   al2_hour: '00',
@@ -39,7 +39,7 @@ export default function (state = initState, action) {
     case SET_ALARM1:
       return {
         ...state,
-        alarm1: true,
+        alarm1: payload,
       };
     case SET_ALARM1_HOUR:
       return {
@@ -65,17 +65,19 @@ export default function (state = initState, action) {
     case SET_ALARM2:
       return {
         ...state,
-        alarm2: true,
+        alarm2: payload,
       };
     case SET_ALARM1_MODE:
       return {
         ...state,
         al1_mode: payload,
+        alarm1: payload !== 'off' ? true : false,
       };
     case SET_ALARM2_MODE:
       return {
         ...state,
         al2_mode: payload,
+        alarm2: payload !== 'off' ? true : false,
       };
     case NEXT_ALARM_SETTING:
       return {
