@@ -43,29 +43,27 @@ const BlinkIcon = ({
 
   return (
     <Fragment>
-      {visible && type === 'al1' && period !== null && !alarm1 ? (
-        <div className={`grid-box__child alarm-1 `}>
+      {type === 'al1' && onAlarmMode.includes(type) ? (
+        <div className={`grid-box__child alarm-1 ${visible ? '' : 'off'}`}>
           <i className="far fa-bell">{msg}</i>
         </div>
       ) : (
-        <div
-          className={`grid-box__child alarm-1 ${
-            alarm1 && period === null ? '' : 'off'
-          }`}
-        >
+        ''
+      )}
+      {type === 'al2' && onAlarmMode.includes(type) ? (
+        <div className={`grid-box__child alarm-2 ${visible ? '' : 'off'}`}>
+          <i className="far fa-bell">{msg}</i>
+        </div>
+      ) : (
+        ''
+      )}
+      {type === 'al1' && (
+        <div className={`grid-box__child alarm-1 ${alarm1 ? '' : 'off'}`}>
           <i className="far fa-bell">{msg}</i>
         </div>
       )}
-      {visible && type === 'al2' && period !== null && !alarm2 ? (
-        <div className={`grid-box__child alarm-2 `}>
-          <i className="far fa-bell">{msg}</i>
-        </div>
-      ) : (
-        <div
-          className={`grid-box__child alarm-2 ${
-            alarm2 && period === null ? '' : 'off'
-          }`}
-        >
+      {type === 'al2' && (
+        <div className={`grid-box__child alarm-2 ${alarm2 ? '' : 'off'}`}>
           <i className="far fa-bell">{msg}</i>
         </div>
       )}
