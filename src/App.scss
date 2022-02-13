@@ -175,3 +175,73 @@ body {
   border-radius: 2em;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
+
+@media screen and (max-width: 500px), screen and (min-width: 300px) {
+  body {
+    display: block;
+    margin-top: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .container {
+    display: block;
+    position: relative;
+    flex-direction: column;
+    justify-content: space-around;
+    justify-items: end;
+    border: 1px solid $light-color;
+    &__mainscreen {
+      border-bottom: 1px solid $dark-color;
+      margin: 0 auto;
+      margin-top: 10px;
+      padding: 10px;
+      text-align: center;
+      align-items: center;
+      .gridbox {
+        position: relative;
+        border-radius: 1rem;
+        margin: 0 auto;
+        display: grid;
+        width: fit-content;
+        grid-gap: 10px;
+        color: $light-color;
+        background-color: $dark-color;
+        padding: 10px;
+        grid-template-areas:
+          '.    .     .    .    .   ampm'
+          'hh   hh colon  mm   mm   . '
+          'mem al1    .   al2  sl   .';
+        grid-template-columns: 40px 40px 30px 40px 40px 30px;
+      }
+      .message-box {
+        background-color: $primary-color;
+        height: fit-content;
+        margin-bottom: 20px;
+        color: $light-color;
+        text-align: left;
+        padding: 5px;
+        border-radius: 2rem;
+      }
+    }
+    &__buttons {
+      display: flex;
+      justify-content: center;
+      justify-content: space-evenly;
+      align-items: center;
+      height: 100vh;
+      flex-wrap: wrap;
+      width: 100%;
+      height: 300px;
+      button {
+        width: fit-content;
+        height: fit-content;
+        height: 50px;
+        width: 100px;
+        cursor: pointer;
+      }
+      button:active {
+        transform: scale(80%, 80%);
+      }
+    }
+  }
+}

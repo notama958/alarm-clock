@@ -57,6 +57,9 @@ const Blink = ({
       }
       clearInterval(period);
     }
+    return () => {
+      clearInterval(period);
+    };
   }, [onTimeSetting]);
   useEffect(() => {
     if (onAlarmSetting && onAlarmMode.includes(type)) {

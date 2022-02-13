@@ -60,24 +60,6 @@ const MainScreen = ({
   };
 
   useEffect(() => {
-    let today = new Date();
-    let h = today.getHours();
-    let m = today.getMinutes();
-    if (h < 10) {
-      h = '0' + h;
-    } else h = h.toString();
-
-    if (m < 10) {
-      m = '0' + m;
-    } else m = m.toString();
-    console.log('First set time');
-    setTimeHour(h);
-    setTimeMinute(m);
-    setHH((HH) => time_hh);
-    setMM((MM) => time_mm);
-  }, []);
-
-  useEffect(() => {
     const id = setTimeout(() => {
       if (!onSystemSetting && !onAlarmSetting) {
         snoozeClock();

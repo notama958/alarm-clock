@@ -94,11 +94,12 @@ const ButtonController = ({
   }, []);
   const timeFormats = ['24h', '12h'];
   const convertInc = (num, max, min = 0, acceleration = 0) => {
-    let temp = (parseInt(num) + 1 + acceleration + min) % max;
+    let temp = (parseInt(num) + 1 + acceleration) % max;
     if (temp == 0) {
       temp = max.toString();
     }
-    if (Math.floor(temp / 10) === 0) {
+    if (temp < 10) {
+      if (temp === 1) temp += min;
       temp = '0' + temp;
     }
     return temp.toString();
@@ -126,7 +127,7 @@ const ButtonController = ({
         timeFormats[(timeFormats.indexOf(time_format) + 1) % timeFormats.length]
       );
     } else if (onTimeSetting === 'snooze_time') {
-      setSnoozeTime(convertInc(snoozeTime, 59, 5, acc));
+      setSnoozeTime(convertInc(snoozeTime, 60, 4, acc));
     }
   };
   const decrement = (e, acc = 0) => {
@@ -140,7 +141,7 @@ const ButtonController = ({
         timeFormats[(timeFormats.indexOf(time_format) + 1) % timeFormats.length]
       );
     } else if (onTimeSetting === 'snooze_time') {
-      setSnoozeTime(convertDec(snoozeTime, 59, 5, acc));
+      setSnoozeTime(convertDec(snoozeTime, 60, 5, acc));
     }
   };
   const bind_up = useLongPress(enabled_up ? callback_up : null, {
