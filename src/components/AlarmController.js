@@ -1,4 +1,10 @@
-import React, { Fragment, useState, useCallback, useEffect } from 'react';
+import React, {
+  Fragment,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useLongPress } from 'use-long-press';
@@ -38,18 +44,23 @@ const AlarmController = ({
   const [fastInc, setFasInc] = useState(false);
   const [fastDec, setFasDec] = useState(false);
 
-  const fastInterval = setInterval(() => {
-    if (fastInc) {
-    }
-    if (fastDec) {
-    }
-  }, 1500);
+  const timer = useRef(null);
+
+  const fastIncrement = () => {
+    timer.current = setInterval(() => {
+      increment(null, 2);
+    });
+  };
+  const timeoutClear = () => {
+    clearInterval(timer.current);
+  };
+  useEffect(() => {
+    // alert(fastInc);
+  }, [fastInc]);
   const Modes = ['rd', 'bu', 'off'];
 
   const callback_up = useCallback((event) => {
-    if (onAlarmSetting) {
-      increment(event, 5);
-    }
+    if (onAlarmSetting) increment(event, 5);
   });
   const callback_down = useCallback((event) => {
     if (onAlarmSetting) decrement(event, 5);
@@ -134,6 +145,7 @@ const AlarmController = ({
     onMove: (event) => {
       if (onAlarmSetting) increment();
     },
+    onStart: (event) => {},
     threshold: 1500,
     captureEvent: true,
     cancelOnMovement: false,
@@ -145,6 +157,7 @@ const AlarmController = ({
     onMove: (event) => {
       if (onAlarmSetting) decrement();
     },
+    onStart: (event) => {},
     threshold: 1500,
     captureEvent: true,
     cancelOnMovement: false,

@@ -78,7 +78,7 @@ const MainScreen = ({
 
   useEffect(() => {
     setAdjHour((adjHour) => ConvertTime(time_hh, time_format, AMPM));
-  }, [AMPM, time_hh]);
+  }, [AMPM, time_hh, AMPM]);
 
   useEffect(() => {
     if (onSystemSetting) {

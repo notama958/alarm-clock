@@ -48,23 +48,8 @@ const ButtonController = ({
   const [enabled, setEnabled] = useState(true);
   const [enabled_up, setEnabled_up] = useState(true);
   const [enabled_down, setEnabled_down] = useState(true);
-  const [mode, setMode] = useState(null);
-  const [snoozePID, setSnoozePID] = useState(0);
   const [snoozeOnClick, setSnoozeOnClick] = useState(false);
-  const [pid, setPid] = useState(
-    setInterval(() => {
-      // alert(mode);
-      if (mode === 1) {
-        console.log(mode);
-        increment(null, 5);
-      } else if (mode === 2) {
-        decrement(null, 5);
-      }
-    }, 1000)
-  );
-  useEffect(() => {
-    return () => clearInterval(pid.current);
-  }, []);
+
   useEffect(() => {
     alarmOff(false);
     let i = setTimeout(() => {
@@ -78,13 +63,12 @@ const ButtonController = ({
   }, [snoozeOnClick]);
   const callback_up = useCallback((event) => {
     if (onSystemSetting) {
-      setMode((mode) => 1);
+      increment(null, 5);
     }
   });
   const callback_down = useCallback((event) => {
     if (onSystemSetting) {
-      console.log('Enter long press');
-      setMode((mode) => 2);
+      decrement(null, 5);
     }
   });
 
@@ -145,45 +129,24 @@ const ButtonController = ({
     }
   };
   const bind_up = useLongPress(enabled_up ? callback_up : null, {
-    onFinish: (event) => {
-      setMode((mode) => null);
-    },
-    onCancel: (event) => {
-      setMode((mode) => null);
-    },
+    onFinish: (event) => {},
+    onCancel: (event) => {},
     onMove: (event) => {
       if (onSystemSetting) increment();
     },
-    threshold: 1000,
+    threshold: 1500,
     captureEvent: true,
     cancelOnMovement: false,
     detect: 'both',
   });
 
-  useEffect(() => {
-    console.log(mode);
-  }, [mode, setMode]);
-
-  useEffect(() => {
-    console.log(pid, mode);
-    if (pid && mode === null) {
-      clearInterval(pid);
-    }
-  }, [pid, setPid]);
-
   const bind_down = useLongPress(enabled_down ? callback_down : null, {
-    onFinish: (event) => {
-      clearInterval(pid.current);
-      setMode((mode) => null);
-    },
-    onCancel: (event) => {
-      clearInterval(pid.current);
-      setMode((mode) => null);
-    },
+    onFinish: (event) => {},
+    onCancel: (event) => {},
     onMove: (event) => {
       if (onSystemSetting) decrement();
     },
-    threshold: 1000,
+    threshold: 1500,
     captureEvent: true,
     cancelOnMovement: false,
     detect: 'both',
@@ -237,7 +200,7 @@ const ButtonController = ({
   return (
     <div className="container__buttons">
       {onAlarmSetting ? (
-        <AlarmController type="up" />
+        <AlarmController type="down" />
       ) : (
         <button className="btn btn-primary" {...bind_down}>
           <i className="fas fa-chevron-down"></i>
@@ -262,7 +225,7 @@ const ButtonController = ({
         AL
       </button>
       {onAlarmSetting ? (
-        <AlarmController type="down" />
+        <AlarmController type="up" />
       ) : (
         <button className="btn btn-primary" {...bind_up}>
           <i className="fas fa-chevron-up"></i>
