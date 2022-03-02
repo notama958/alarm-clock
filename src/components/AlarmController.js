@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useLongPress } from 'use-long-press';
 import {
@@ -41,22 +40,36 @@ const AlarmController = ({
 }) => {
   const [enabled_up, setEnabled_up] = useState(true);
   const [enabled_down, setEnabled_down] = useState(true);
-  const [fastInc, setFasInc] = useState(false);
-  const [fastDec, setFasDec] = useState(false);
-
+  const [temp,setTemp]=useState(0);
+  const [mode,setMode]=useState(null);
   const timer = useRef(null);
 
   const fastIncrement = () => {
     timer.current = setInterval(() => {
-      increment(null, 2);
-    });
+      setTemp(temp=>temp+1);
+      setMode(mode=> "inc");
+    },500);
   };
+  const fastDecrement = () => {
+    timer.current = setInterval(() => {
+      setTemp(temp=>temp-1);
+      setMode(mode=> "dec");
+    },500);
+  };
+  useEffect(()=>{
+    if(mode==='inc')
+    {
+      increment(null, 2);
+    }
+    else{
+      decrement(null, 2);
+    }
+    // return ()=> clearInterval(timer.current);
+  },[temp,setTemp])
   const timeoutClear = () => {
     clearInterval(timer.current);
   };
-  useEffect(() => {
-    // alert(fastInc);
-  }, [fastInc]);
+
   const Modes = ['rd', 'bu', 'off'];
 
   const callback_up = useCallback((event) => {
@@ -166,13 +179,31 @@ const AlarmController = ({
   return (
     <Fragment>
       {type === 'up' ? (
+        <Fragment>
         <button className="btn btn-primary" {...bind_up}>
           <i className="fas fa-chevron-up"></i>
         </button>
+        <button className="btn btn-primary"
+         onMouseLeave={timeoutClear}
+         onMouseUp={timeoutClear}
+         onMouseDown={fastIncrement}
+        >
+          <i className="fas fa-angle-double-up"></i>
+        </button>
+          </Fragment>
       ) : (
+        <Fragment>
         <button className="btn btn-primary" {...bind_down}>
           <i className="fas fa-chevron-down"></i>
         </button>
+        <button className="btn btn-primary"
+            onMouseLeave={timeoutClear}
+            onMouseUp={timeoutClear}
+            onMouseDown={fastDecrement}
+        >
+          <i className="fas fa-angle-double-down"></i>
+        </button>
+    </Fragment>
       )}
     </Fragment>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect , Fragment} from 'react';
 import PropTypes from 'prop-types';
 import { useLongPress } from 'use-long-press';
 import { connect } from 'react-redux';
@@ -49,6 +49,35 @@ const ButtonController = ({
   const [enabled_up, setEnabled_up] = useState(true);
   const [enabled_down, setEnabled_down] = useState(true);
   const [snoozeOnClick, setSnoozeOnClick] = useState(false);
+  const [temp,setTemp]=useState(0);
+  const [mode,setMode]=useState(null);
+  const timer = useRef(null);
+
+  const fastIncrement = () => {
+    timer.current = setInterval(() => {
+      setTemp(temp=>temp+1);
+      setMode(mode=> "inc");
+    },500);
+  };
+  const fastDecrement = () => {
+    timer.current = setInterval(() => {
+      setTemp(temp=>temp-1);
+      setMode(mode=> "dec");
+    },500);
+  };
+  useEffect(()=>{
+    if(mode==='inc')
+    {
+      increment(null, 2);
+    }
+    else{
+      decrement(null, 2);
+    }
+    // return ()=> clearInterval(timer.current);
+  },[temp,setTemp])
+  const timeoutClear = () => {
+    clearInterval(timer.current);
+  };
 
   useEffect(() => {
     alarmOff(false);
@@ -202,9 +231,22 @@ const ButtonController = ({
       {onAlarmSetting ? (
         <AlarmController type="down" />
       ) : (
+        <Fragment>
+
         <button className="btn btn-primary" {...bind_down}>
           <i className="fas fa-chevron-down"></i>
         </button>
+        <button className="btn btn-primary"
+         onMouseLeave={timeoutClear}
+         onMouseUp={timeoutClear}
+         onMouseDown={()=>{
+           if(onTimeSetting)
+           fastDecrement();
+         }}
+        >
+          <i className="fas fa-angle-double-down"></i>
+        </button>
+        </Fragment>
       )}
       <button className="btn btn-primary">VOL</button>
       <button className="btn btn-primary" onClick={(e) => alarmOff(false)}>
@@ -227,9 +269,22 @@ const ButtonController = ({
       {onAlarmSetting ? (
         <AlarmController type="up" />
       ) : (
+        <Fragment>
         <button className="btn btn-primary" {...bind_up}>
           <i className="fas fa-chevron-up"></i>
         </button>
+        <button className="btn btn-primary"
+         onMouseLeave={timeoutClear}
+         onMouseUp={timeoutClear}
+         onMouseDown={()=>{
+           if(onTimeSetting)
+           fastIncrement();
+         }}
+        >
+          <i className="fas fa-angle-double-up"></i>
+        </button>
+        </Fragment>
+
       )}
     </div>
   );
